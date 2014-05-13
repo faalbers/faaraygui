@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "renderwidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -16,7 +17,8 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow  *ui;
+    RenderWidget    *renderWidgetPtr_;
 };
 
 #endif // MAINWINDOW_H
