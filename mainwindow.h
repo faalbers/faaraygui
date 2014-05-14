@@ -16,6 +16,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void updateOGL() const;
+
+protected slots:
+    void render();
+
 private:
     Ui::MainWindow  *ui;
     RenderWidget    *renderWidgetPtr_;

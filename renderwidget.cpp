@@ -7,6 +7,7 @@ RenderWidget::RenderWidget(QWidget *parent) :
     pucBufferPtr_(0)
 {
 }
+
 RenderWidget::~RenderWidget()
 {
     if (pucBufferPtr_ != 0) delete[] pucBufferPtr_;
@@ -73,7 +74,7 @@ void RenderWidget::resizeGL(int width, int height)
 void RenderWidget::setPixel(const GFA::Index &kiX, const GFA::Index &kiY,
     const unsigned char &r, const unsigned char &g, const unsigned char &b, const unsigned char &a)
 {
-   if(kiX >= width_ || kiY >= height_) return;
+   if (kiX >= width_ || kiY >= height_) return;
 
    pucBufferPtr_[kiX*4 + kiY*width_*4] = r;
    pucBufferPtr_[kiX*4 + 1   +kiY*width_*4] = g;
