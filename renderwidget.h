@@ -2,7 +2,7 @@
 #define RENDERWIDGET_H
 
 #include <QGLWidget>
-#include "gfa.h"
+#include "gfa/gfa.h"
 
 class RenderWidget : public QGLWidget
 {
