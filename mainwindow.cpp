@@ -25,6 +25,8 @@ void MainWindow::render()
     // Initialize render buffer
     renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
 
+    //renderJobPtr_   = new FaaRay::RenderJob;
+
     updateOGL();
 }
 //==============================================================================
