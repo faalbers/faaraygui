@@ -21,7 +21,9 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-unix:!macx: LIBS += -L$$PWD/../inst/lib/ -lgfa
+unix|win32: LIBS += -L$$PWD/../inst/lib/ -lgfa
+unix|win32: LIBS += -L$$PWD/../inst/lib/ -lfaaray
 
 INCLUDEPATH += $$PWD/../inst/include
 DEPENDPATH += $$PWD/../inst/include
+
