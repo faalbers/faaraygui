@@ -1,6 +1,7 @@
 //==============================================================================
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "guiviewplane.h"
 //==============================================================================
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,7 +26,12 @@ void MainWindow::render()
     // Initialize render buffer
     renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
 
-    //renderJobPtr_   = new FaaRay::RenderJob;
+    // Create render job
+    renderJobPtr_   = new FaaRay::RenderJob;
+
+    // Replace renderjob viewplane by specifically designed viewplane
+    // for this gui based on FaaRay::ViewPlane
+    GUIViewPlane *test = new GUIViewPlane(renderWidgetPtr_);
 
     updateOGL();
 }

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "renderwidget.h"
+#include "faaray/renderjob.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,6 +26,7 @@ protected slots:
 private:
     Ui::MainWindow  *ui;
     RenderWidget    *renderWidgetPtr_;
+    FaaRay::RenderJob   *renderJobPtr_;
 };
 
 #endif // MAINWINDOW_H
