@@ -23,7 +23,8 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-CONFIG += c++11
+unix: CONFIG += c++11
+win32: QMAKE_CXXFLAGS += -std=c++11
 
 unix|win32: LIBS += -L$$PWD/../inst/lib/ -lgfa
 unix|win32: LIBS += -L$$PWD/../inst/lib/ -lfaaray
