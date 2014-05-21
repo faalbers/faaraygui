@@ -10,7 +10,11 @@ class RenderThread : public QThread
 public:
     explicit RenderThread(FaaRay::RenderJob * const renderJobPtr);
 
+protected:
+    void run();
+
 signals:
+    void renderDone();
 
 public slots:
 

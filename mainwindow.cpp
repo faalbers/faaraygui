@@ -2,6 +2,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "guiviewplane.h"
+#include <QTime>
 //==============================================================================
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -24,6 +25,9 @@ MainWindow::~MainWindow()
 //==============================================================================
 void MainWindow::render()
 {
+    // Grey out render button
+    ui->render->setDisabled(true);
+
     // Initialize render buffer
     renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
 
@@ -35,15 +39,33 @@ void MainWindow::render()
     GUIViewPlaneSPtr viewPlaneSPtr(new GUIViewPlane(renderWidgetPtr_));
     renderJobPtr_->setViewPlaneSPtr(viewPlaneSPtr);
 
+    // Set multi thread
+    if (ui->cpus->currentIndex() == 1) renderJobPtr_->setMultiThread();
+
     updateOGL();
 
     // Start Qt render tread
     if (renderThreadPtr_ == 0) {
         renderThreadPtr_ = new RenderThread(renderJobPtr_);
-        //connect(renderThreadPtr_, SIGNAL(renderDone()),this, SLOT(renderDone()));
-        //renderThreadPtr_->start();
-        //timer_->start();
+        connect(renderThreadPtr_, SIGNAL(renderDone()),this, SLOT(renderDone()));
+        renderThreadPtr_->start();
     }
+}
+//==============================================================================
+void MainWindow::renderDone()
+{
+    if (renderThreadPtr_ != 0) {
+        renderThreadPtr_->wait();
+        delete renderThreadPtr_;
+        renderThreadPtr_ = 0;
+    }
+
+    // Remove render job
+    delete renderJobPtr_; renderJobPtr_ = 0;
+
+    updateOGL();
+
+    ui->render->setDisabled(false);
 }
 //==============================================================================
 void MainWindow::updateOGL() const

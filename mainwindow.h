@@ -23,6 +23,7 @@ public slots:
 
 protected slots:
     void render();
+    void renderDone();
 
 private:
     Ui::MainWindow      *ui;
