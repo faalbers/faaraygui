@@ -6,7 +6,8 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    renderWidgetPtr_(new RenderWidget)
+    renderWidgetPtr_(new RenderWidget),
+    renderThreadPtr_(0)
 {
     ui->setupUi(this);
     setWindowTitle(tr("FAARay"));
@@ -31,9 +32,18 @@ void MainWindow::render()
 
     // Replace renderjob viewplane by specifically designed viewplane
     // for this gui based on FaaRay::ViewPlane
-    GUIViewPlane *test = new GUIViewPlane(renderWidgetPtr_);
+    GUIViewPlaneSPtr viewPlaneSPtr(new GUIViewPlane(renderWidgetPtr_));
+    renderJobPtr_->setViewPlaneSPtr(viewPlaneSPtr);
 
     updateOGL();
+
+    // Start Qt render tread
+    if (renderThreadPtr_ == 0) {
+        renderThreadPtr_ = new RenderThread(renderJobPtr_);
+        //connect(renderThreadPtr_, SIGNAL(renderDone()),this, SLOT(renderDone()));
+        //renderThreadPtr_->start();
+        //timer_->start();
+    }
 }
 //==============================================================================
 void MainWindow::updateOGL() const

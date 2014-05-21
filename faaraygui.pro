@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     renderwidget.cpp \
-    guiviewplane.cpp
+    guiviewplane.cpp \
+    renderthread.cpp
 
 HEADERS  += mainwindow.h \
     renderwidget.h \
-    guiviewplane.h
+    guiviewplane.h \
+    renderthread.h
 
 FORMS    += mainwindow.ui
 

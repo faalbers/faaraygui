@@ -3,11 +3,18 @@
 //==============================================================================
 #include "faaray/viewplane.h"
 #include "renderwidget.h"
+#include <memory>
 //==============================================================================
 class GUIViewPlane : public FaaRay::ViewPlane
 {
 public:
-    GUIViewPlane(RenderWidget *renderWidgetPtr_);
+    GUIViewPlane(RenderWidget *renderWidgetPtr);
+
+private:
+    RenderWidget  *renderWidgetPtr_;
 };
+
+typedef std::shared_ptr<GUIViewPlane> GUIViewPlaneSPtr;
+
 //==============================================================================
 #endif // GUIVIEWPLANE_H
