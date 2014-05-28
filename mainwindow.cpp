@@ -3,6 +3,7 @@
 #include "ui_mainwindow.h"
 #include "guiviewplane.h"
 #include <QTime>
+#include "faaray/testscenes.h"
 //==============================================================================
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,18 +29,25 @@ void MainWindow::render()
     // Grey out render button
     ui->render->setDisabled(true);
 
-    // Initialize render buffer
-    renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
-
     // Create render job
     renderJobPtr_   = new FaaRay::RenderJob;
 
-    // Replace renderjob viewplane by specifically designed viewplane
-    // for this gui based on FaaRay::ViewPlane
+    // Populate Scene with one of FaaRay's Test Scenes
+    FaaRay::TestScenes testScenes(renderJobPtr_->getSceneSPtr());
+    //testScenes.buildSceneA();
+
+    // Initialize GUI render buffer
+    renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
+
+    // Create derrived GUI viewplane class from the base viewplane class
+    // Where the virtual setPixel method is changed.
+    // A smartpointer is created for the GUI viewplane
     GUIViewPlaneSPtr viewPlaneSPtr(new GUIViewPlane(renderWidgetPtr_));
+
+    // Add smart pointer for GUI viewplane to render job
     renderJobPtr_->setViewPlaneSPtr(viewPlaneSPtr);
 
-    // Set multi thread
+    // Set multi threading
     if (ui->cpus->currentIndex() == 1) renderJobPtr_->setMultiThread();
 
     updateOGL();

@@ -11,11 +11,11 @@ class GUIViewPlane : public FaaRay::ViewPlane
 public:
     GUIViewPlane(RenderWidget *renderWidgetPtr);
 
+    virtual void setPixel(const GFA::Index &x, const GFA::Index &y,
+        const GFA::RGBColor &c) const;
+
 private:
     RenderWidget  *renderWidgetPtr_;
-
-    virtual void setGUIPixel_(const GFA::Index &x, const GFA::Index &y,
-        const GFA::RGBColor &c) const;
 };
 
 typedef std::shared_ptr<GUIViewPlane> GUIViewPlaneSPtr;

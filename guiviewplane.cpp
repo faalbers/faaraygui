@@ -6,7 +6,7 @@ GUIViewPlane::GUIViewPlane(RenderWidget *renderWidgetPtr) :
 {
 }
 //==============================================================================
-void GUIViewPlane::setGUIPixel_(const GFA::Index &x, const GFA::Index &y,
+void GUIViewPlane::setPixel(const GFA::Index &x, const GFA::Index &y,
         const GFA::RGBColor &c) const
 {
     //NOTE: add warning
