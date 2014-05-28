@@ -4,6 +4,9 @@
 #include "guiviewplane.h"
 #include <QTime>
 #include "faaray/testscenes.h"
+#include "faaray/camera.h"
+#include "faaray/pinholecamera.h"
+#include "gfa/point3d.h"
 //==============================================================================
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -32,20 +35,19 @@ void MainWindow::render()
     // Create render job
     renderJobPtr_   = new FaaRay::RenderJob;
 
+    // Setup view plane
+    viewPlaneSetup_();
+
+    // Add UI settings to scene
+    addUIToScene_();
+
     // Populate Scene with one of FaaRay's Test Scenes
     FaaRay::TestScenes testScenes(renderJobPtr_->getSceneSPtr());
-    //testScenes.buildSceneA();
+    testScenes.addSetA();
 
     // Initialize GUI render buffer
     renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
 
-    // Create derrived GUI viewplane class from the base viewplane class
-    // Where the virtual setPixel method is changed.
-    // A smartpointer is created for the GUI viewplane
-    GUIViewPlaneSPtr viewPlaneSPtr(new GUIViewPlane(renderWidgetPtr_));
-
-    // Add smart pointer for GUI viewplane to render job
-    renderJobPtr_->setViewPlaneSPtr(viewPlaneSPtr);
 
     // Set multi threading
     if (ui->cpus->currentIndex() == 1) renderJobPtr_->setMultiThread();
@@ -80,3 +82,55 @@ void MainWindow::updateOGL() const
 {
     renderWidgetPtr_->update();
 }
+//==============================================================================
+void MainWindow::viewPlaneSetup_() const
+{
+    // Create derrived GUI viewplane class from the base viewplane class
+    // Where the virtual setPixel method is changed.
+    // A smartpointer is created for the GUI viewplane
+    GUIViewPlaneSPtr viewPlaneSPtr(new GUIViewPlane(renderWidgetPtr_));
+
+    // set samples value from ui
+    viewPlaneSPtr->setNumSamples(ui->samples->value());
+    // We need to get the calculated result back based on the input value
+    //ui->samples->setValue(viewPlaneSPtr->numSamples());
+
+    // Add smart pointer for GUI viewplane to render job
+    renderJobPtr_->setViewPlaneSPtr(viewPlaneSPtr);
+}
+//==============================================================================
+void MainWindow::addUIToScene_() const
+{
+    // Get shared scene pointer
+    FaaRay::SceneSPtr sceneSPtr = renderJobPtr_->getSceneSPtr();
+
+    // Add selected camera and settings
+    FaaRay::CameraSPtr  cameraSPtr;
+    FaaRay::PinholeCamera *pinHoleCameraPtr = 0;
+    switch (ui->camera->currentIndex()) {
+        case 0:
+            pinHoleCameraPtr = new FaaRay::PinholeCamera();
+            pinHoleCameraPtr->setViewPlaneDistance(ui->vpDistance->value());
+            pinHoleCameraPtr->setZoom(ui->zoom->value());
+            cameraSPtr.reset(pinHoleCameraPtr);
+            break;
+        default:
+            pinHoleCameraPtr = new FaaRay::PinholeCamera();
+            pinHoleCameraPtr->setViewPlaneDistance(ui->vpDistance->value());
+            pinHoleCameraPtr->setZoom(ui->zoom->value());
+            cameraSPtr.reset(pinHoleCameraPtr);
+            ui->camera->setCurrentIndex(0);
+            break;
+    }
+    cameraSPtr->setEye(GFA::Point3D(
+            ui->cameraX->value(),
+            ui->cameraY->value(),
+            ui->cameraZ->value()));
+    cameraSPtr->setLookAt(GFA::Point3D(
+            ui->lookAtX->value(),
+            ui->lookAtY->value(),
+            ui->lookAtZ->value()));
+    sceneSPtr->setCamera(cameraSPtr);
+
+}
+//==============================================================================

@@ -32,6 +32,7 @@ private:
     RenderThread        *renderThreadPtr_;
 
     void viewPlaneSetup_() const;
+    void addUIToScene_() const;
 };
 //==============================================================================
 #endif // MAINWINDOW_H
