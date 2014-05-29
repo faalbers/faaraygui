@@ -35,6 +35,9 @@ void MainWindow::render()
     // Create render job
     renderJobPtr_   = new FaaRay::RenderJob;
 
+    // Initialize GUI render buffer
+    renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
+
     // Setup view plane
     viewPlaneSetup_();
 
@@ -44,10 +47,6 @@ void MainWindow::render()
     // Populate Scene with one of FaaRay's Test Scenes
     FaaRay::TestScenes testScenes(renderJobPtr_->getSceneSPtr());
     testScenes.addSetA();
-
-    // Initialize GUI render buffer
-    renderWidgetPtr_->resizeBuffer(ui->width->value(), ui->height->value());
-
 
     // Set multi threading
     if (ui->cpus->currentIndex() == 1) renderJobPtr_->setMultiThread();
@@ -71,7 +70,10 @@ void MainWindow::renderDone()
     }
 
     // Remove render job
-    delete renderJobPtr_; renderJobPtr_ = 0;
+    if (renderJobPtr_ != 0) {
+        delete renderJobPtr_;
+        renderJobPtr_ = 0;
+    }
 
     updateOGL();
 
@@ -92,8 +94,9 @@ void MainWindow::viewPlaneSetup_() const
 
     // set samples value from ui
     viewPlaneSPtr->setNumSamples(ui->samples->value());
+
     // We need to get the calculated result back based on the input value
-    //ui->samples->setValue(viewPlaneSPtr->numSamples());
+    ui->samples->setValue(viewPlaneSPtr->numSamples());
 
     // Add smart pointer for GUI viewplane to render job
     renderJobPtr_->setViewPlaneSPtr(viewPlaneSPtr);
