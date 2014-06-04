@@ -14,7 +14,7 @@ void RenderThread::run()
     timer.start();
 
     // render
-    //renderJobPtr_->render();
+    renderJobPtr_->render();
 
     // Render timer result
     std::cout << "Render SEC: " << timer.elapsed()/1000.0 << std::endl;

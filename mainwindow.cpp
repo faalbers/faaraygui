@@ -6,6 +6,8 @@
 #include "faaray/testscenes.h"
 #include "faaray/camera.h"
 #include "faaray/pinholecamera.h"
+#include "faaray/tracer.h"
+#include "faaray/raycasttracer.h"
 #include "gfa/point3d.h"
 //==============================================================================
 MainWindow::MainWindow(QWidget *parent) :
@@ -109,19 +111,19 @@ void MainWindow::addUIToScene_() const
 
     // Add selected camera and settings
     FaaRay::CameraSPtr  cameraSPtr;
-    FaaRay::PinholeCamera *pinHoleCameraPtr = 0;
+    FaaRay::PinholeCameraSPtr pinHoleCameraSPtr;
     switch (ui->camera->currentIndex()) {
         case 0:
-            pinHoleCameraPtr = new FaaRay::PinholeCamera();
-            pinHoleCameraPtr->setViewPlaneDistance(ui->vpDistance->value());
-            pinHoleCameraPtr->setZoom(ui->zoom->value());
-            cameraSPtr.reset(pinHoleCameraPtr);
+            pinHoleCameraSPtr = FaaRay::MakePinholeCameraSPtr();
+            pinHoleCameraSPtr->setViewPlaneDistance(ui->vpDistance->value());
+            pinHoleCameraSPtr->setZoom(ui->zoom->value());
+            cameraSPtr = pinHoleCameraSPtr;
             break;
         default:
-            pinHoleCameraPtr = new FaaRay::PinholeCamera();
-            pinHoleCameraPtr->setViewPlaneDistance(ui->vpDistance->value());
-            pinHoleCameraPtr->setZoom(ui->zoom->value());
-            cameraSPtr.reset(pinHoleCameraPtr);
+            pinHoleCameraSPtr = FaaRay::MakePinholeCameraSPtr();
+            pinHoleCameraSPtr->setViewPlaneDistance(ui->vpDistance->value());
+            pinHoleCameraSPtr->setZoom(ui->zoom->value());
+            cameraSPtr = pinHoleCameraSPtr;
             ui->camera->setCurrentIndex(0);
             break;
     }
@@ -135,5 +137,17 @@ void MainWindow::addUIToScene_() const
             ui->lookAtZ->value()));
     sceneSPtr->setCamera(cameraSPtr);
 
+    // Create tracer and add to scene
+    FaaRay::TracerSPtr tracerSPtr;
+    switch (ui->tracer->currentIndex()) {
+        case 0:
+            tracerSPtr = FaaRay::MakeRayCastTracerSPtr();
+            break;
+        default:
+            tracerSPtr = FaaRay::MakeRayCastTracerSPtr();
+            ui->tracer->setCurrentIndex(0);
+            break;
+    }
+    sceneSPtr->setTracer(tracerSPtr);
 }
 //==============================================================================
