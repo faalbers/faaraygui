@@ -25,7 +25,7 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-unix: QMAKE_CXXFLAGS += -std=c++11
+unix: QMAKE_CXXFLAGS += -std=c++0x
 
 unix|win32: LIBS += -L$$PWD/../inst/lib/ -lgfa
 unix|win32: LIBS += -L$$PWD/../inst/lib/ -lfaaray
@@ -33,3 +33,5 @@ unix|win32: LIBS += -L$$PWD/../inst/lib/ -lfaaray
 INCLUDEPATH += $$PWD/../inst/include
 DEPENDPATH += $$PWD/../inst/include
 
+
+unix:!macx: LIBS += -lGL
