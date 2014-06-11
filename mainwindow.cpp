@@ -163,7 +163,7 @@ void MainWindow::addUIToScene_() const
             ui->tracer->setCurrentIndex(0);
             break;
     }
-    ambientLightSPtr->setLs(0.5);
+    ambientLightSPtr->setLs(0.05);
     sceneSPtr->setAmbientLight(ambientLightSPtr);
 
 }
