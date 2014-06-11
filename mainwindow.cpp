@@ -8,6 +8,8 @@
 #include "faaray/pinholecamera.h"
 #include "faaray/tracer.h"
 #include "faaray/raycasttracer.h"
+#include "faaray/light.h"
+#include "faaray/ambientlight.h"
 #include "gfa/point3d.h"
 //==============================================================================
 MainWindow::MainWindow(QWidget *parent) :
@@ -149,5 +151,20 @@ void MainWindow::addUIToScene_() const
             break;
     }
     sceneSPtr->setTracer(tracerSPtr);
+
+    // Create Ambient Light and add to scene
+    FaaRay::AmbientLightSPtr ambientLightSPtr;
+    switch (ui->ambient->currentIndex()) {
+        case 0:
+            ambientLightSPtr = FaaRay::MakeAmbientLightSPtr();
+            break;
+        default:
+            ambientLightSPtr = FaaRay::MakeAmbientLightSPtr();
+            ui->tracer->setCurrentIndex(0);
+            break;
+    }
+    ambientLightSPtr->setLs(0.5);
+    sceneSPtr->setAmbientLight(ambientLightSPtr);
+
 }
 //==============================================================================
