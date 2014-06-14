@@ -50,7 +50,7 @@ void MainWindow::render()
 
     // Populate Scene with one of FaaRay's Test Scenes
     FaaRay::TestScenes testScenes(renderJobPtr_->getSceneSPtr());
-    testScenes.addSetA();
+    testScenes.addSetB();
 
     // Set multi threading
     if (ui->cpus->currentIndex() == 1) renderJobPtr_->setMultiThread();
