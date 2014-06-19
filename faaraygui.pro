@@ -35,3 +35,6 @@ DEPENDPATH += $$PWD/../inst/include
 
 
 unix:!macx: LIBS += -lGL
+
+OTHER_FILES += \
+    Doxyfile
