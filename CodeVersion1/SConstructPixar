@@ -1,0 +1,100 @@
+import os
+
+DEBUG = False
+
+# Create base environment
+baseEnv = Environment()
+
+# Setup cross platform
+if baseEnv['PLATFORM'] == 'posix':
+    baseEnv.Append(CCFLAGS = [
+        '-DHAVE_LINUX'
+        , '-std=c++0x'
+        #, '-std=c++11'
+        #, '-pedantic-errors'
+        , '-Wall'
+        , '-Wextra'
+        , '-Wuninitialized'
+        ])
+    if DEBUG:
+        baseEnv.Append(CCFLAGS = ['-fno-inline', '-O0', '-g3'])
+    else:
+        baseEnv.Append(CCFLAGS = ['-O'])
+    #LibPath
+    if os.environ['USER'] == 'afrank':
+        baseEnv.Append(LIBPATH = ['/pixar/d2/sets/tools-base-03/lib64'])
+        baseEnv.Append(LIBS = ['GLEW'])
+        qtver = ['qt4', 'QT4DIR', '/pixar/d2/sets/tools-base-03']
+        #pixarToolsBase = '/pixar/d2/sets/tools-base-03';
+        pixarToolsBase = '/dist/d2sets/fedora-11-x86_64/tools-base-03-python';
+        baseEnv.Append(CPPPATH = ['%s/include' % pixarToolsBase])
+        baseEnv.Append(LIBPATH = ['%s/lib' % pixarToolsBase])
+        baseEnv.Replace(CXX = '/dist/d2sets/fedora-11-x86_64/tools-base-03-python/bin/g++')
+    elif os.environ['USER'] == 'frank':
+        baseEnv.Append(LIBS = ['GLEW', 'GL'])
+        qtver = ['qt4', 'QT4DIR', '/home/frank/QtSDK/Desktop/Qt/474/gcc']
+        #qtver = ['qt5', 'QT5DIR', '/home/frank/Qt5.0.2/5.0.2/gcc_64']
+        toolsBase = '/home/frank/tbb41_20130116oss'
+        baseEnv.Append(CPPPATH = ['%s/include' % toolsBase])
+        baseEnv.Append(LIBPATH = ['%s/lib/intel64/cc4.1.0_libc2.4_kernel2.6.16.21' % toolsBase])
+    baseEnv.Append(LIBS= ['tbb'])
+
+if baseEnv['PLATFORM'] == 'win32':
+    baseEnv.Append(ENV = {'PATH' : os.environ['PATH']})
+    baseEnv.Append(ENV = {'LIB' : os.environ.get('LIB')})
+    baseEnv.Append(ENV = {'INCLUDE' : os.environ.get('INCLUDE')})
+    baseEnv.Append(CCFLAGS = [
+        '-DHAVE_WINDOWS'
+        #,'/W4'
+        #,'/Wall'
+        ,'/WX'
+        #,'/Za'
+        , '/EHsc'
+        ])
+    #--- QT VERSION ---
+    #qtver = ['qt4', 'QT4DIR', 'C:/Qt/4.7.4']
+    qtver = ['qt5', 'QT5DIR', 'C:/Qt/Qt5.0.2/5.0.2/msvc2012_64']
+
+if baseEnv['PLATFORM'] == 'darwin':
+    baseEnv.Append(CCFLAGS = [
+        '-DHAVE_OSX'])
+    #--- QT VERSION ---
+    qtver = ['qt4', 'QT4DIR', '']
+
+# DIST SCTRUCTURE
+if DEBUG:
+    baseEnv['BUILDKIND'] = 'debug'
+else:
+    baseEnv['BUILDKIND'] = 'opt'
+distPath = '#/inst/%s/%s' % (baseEnv['PLATFORM'], baseEnv['BUILDKIND'])
+baseEnv['DISTPATH'] = distPath
+
+#...further customization of base env
+
+# Add GFA and FAARAY
+baseEnv.Append(CPPPATH = ['/home/%s/trees/work/gfa/inst/posix/%s/include' % (os.environ['USER'],baseEnv['BUILDKIND']) ])
+baseEnv.Append(LIBPATH = ['/home/%s/trees/work/gfa/inst/posix/%s/lib' % (os.environ['USER'],baseEnv['BUILDKIND']) ])
+baseEnv.Append(CPPPATH = ['/home/%s/trees/work/faaray/inst/posix/%s/include' % (os.environ['USER'],baseEnv['BUILDKIND']) ])
+baseEnv.Append(LIBPATH = ['/home/%s/trees/work/faaray/inst/posix/%s/lib' % (os.environ['USER'],baseEnv['BUILDKIND']) ])
+baseEnv.Append(LIBS = ['gfa', 'faaray'])
+
+# Clone Qt environment
+qtEnv = baseEnv.Clone()
+
+# Set QT#DIR and PKG_CONFIG_PATH
+qtEnv['ENV']['PKG_CONFIG_PATH'] = os.path.join(qtver[2], 'lib/pkgconfig')
+qtEnv[qtver[1]] = qtver[2]
+
+# Add qt tool
+qtEnv.Tool(qtver[0])
+
+#...further customization of qt env
+
+# Export environments
+Export('baseEnv qtEnv')
+
+# Your other stuff...
+
+# ...including the call to your SConscripts
+SConscript('SConscript')
+

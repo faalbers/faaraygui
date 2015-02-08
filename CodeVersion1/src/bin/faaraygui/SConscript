@@ -1,0 +1,18 @@
+Import('qtEnv')
+
+binEnv = qtEnv.Clone()
+
+if 'qt4' in binEnv['TOOLS']:
+    binEnv.EnableQt4Modules(['QtGui','QtOpenGL'])
+if 'qt5' in binEnv['TOOLS']:
+    binEnv.EnableQt5Modules(['QtWidgets','QtCore','QtGui', 'QtOpenGL'])
+
+binEnv.Append(LINKFLAGS = ["-Wl,-rpath='$$ORIGIN'"])
+binEnv.Append(CPPPATH = '#/src/lib')
+binEnv.Append(LIBPATH = '#/gen/lib')
+binEnv.Append(LIBS = ['faaraygui'])
+
+prog = binEnv.Program('faaraygui', Glob('*.cpp'))
+
+binEnv.Install('%s/bin' % binEnv['DISTPATH'], prog)
+

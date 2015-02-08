@@ -1,0 +1,9 @@
+setenv LD_LIBRARY_PATH /home/afrank/trees/work/gfa/inst/posix/debug/lib:/home/afrank/trees/work/faaray/inst/posix/debug/lib
+setenv LD_LIBRARY_PATH /home/afrank/trees/work/gfa/inst/posix/opt/lib:/home/afrank/trees/work/faaray/inst/posix/opt/lib
+setenv LD_LIBRARY_PATH /pixar/d2/sets/tools-base-03/lib64:/home/afrank/trees/work/gfa/inst/posix/opt/lib:/home/afrank/trees/work/faaray/inst/posix/opt/lib
+setenv LD_LIBRARY_PATH /dist/d2sets/fedora-11-x86_64/tools-base-03-python/lib64:/home/afrank/trees/work/gfa/inst/posix/opt/lib:/home/afrank/trees/work/faaray/inst/posix/opt/lib
+
+export LD_LIBRARY_PATH=/home/frank/trees/work/gfa/inst/posix/debug/lib:/home/frank/trees/work/faaray/inst/posix/debug/lib
+export LD_LIBRARY_PATH=/home/frank/trees/work/gfa/inst/posix/opt/lib:/home/frank/trees/work/faaray/inst/posix/opt/lib:/home/frank/tbb41_20130116oss/lib/intel64/cc4.1.0_libc2.4_kernel2.6.16.21
+
+http://www.songho.ca/opengl/gl_pbo.html#unpack

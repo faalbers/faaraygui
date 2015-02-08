@@ -1,0 +1,17 @@
+Import('qtEnv')
+
+env = qtEnv.Clone()
+
+if 'qt4' in env['TOOLS']:
+    env.EnableQt4Modules(['QtGui'])
+if 'qt5' in env['TOOLS']:
+    env.EnableQt5Modules(['QtWidgets','QtCore','QtGui'])
+
+env.Append(CPPPATH = '#/src/lib')
+env.Append(LIBPATH = '#/gen/lib')
+env.Append(LIBS = ['faaray'])
+
+prog = env.Program('faaray', Glob('*.cpp'))
+
+env.Install('%s/bin' % env['DEBUG'], prog)
+

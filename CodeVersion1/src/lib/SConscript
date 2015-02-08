@@ -1,0 +1,18 @@
+Import('qtEnv')
+
+libEnv = qtEnv.Clone()
+
+Export('libEnv')
+
+lib_subdirs = Split("""
+    GUI
+""")
+
+objs = []
+for subdir in lib_subdirs:
+    sub_objs = SConscript('%s/SConscript' % subdir)
+    objs += sub_objs
+
+libEnv.Library('faaraygui', objs)
+
+

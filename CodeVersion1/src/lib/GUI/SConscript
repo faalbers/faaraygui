@@ -1,0 +1,28 @@
+Import('libEnv')
+
+if 'qt4' in libEnv['TOOLS']:
+    libEnv.EnableQt4Modules(['QtGui', 'QtCore', 'QtOpenGL'])
+    libEnv.Uic4(Glob('*.ui'))
+if 'qt5' in libEnv['TOOLS']:
+    libEnv.EnableQt5Modules(['QtWidgets','QtCore','QtGui', 'QtOpenGL'])
+    libEnv.Uic5(Glob('*.ui'))
+
+lib_names = Split("""
+    RenderWidget
+    MainWindow
+    RenderThread
+    GUIViewPlane
+""")
+
+libEnv.Append(CPPPATH = '#/gen/lib/GUI')
+
+lib_objs = [name+'.cpp' for name in lib_names]
+objects = libEnv.SharedObject(lib_objs+Glob('*.qrc'))
+
+lib_heads = [name+'.h' for name in lib_names]
+lib_heads_install = [libEnv['DISTPATH']+'/include/FaaRay/Scene/'+name for name in lib_heads]
+libEnv.InstallAs(lib_heads_install, lib_heads)
+
+Return('objects')
+
+

@@ -1,0 +1,108 @@
+import os
+
+# BASE ENVIRONMENT
+# Environment that is platform agnostic
+baseEnv = Environment()
+
+platform    = baseEnv['PLATFORM']
+debug       = False
+
+# platform and user specific
+if platform == 'posix':
+    user = os.environ['USER']
+    baseEnv.Append(CCFLAGS = [
+        '-DHAVE_LINUX'
+        #,'-std=c++0x'
+        ,'-std=c++11'
+        ,'-pedantic-errors'
+        ,'-Wall'
+        ,'-Wextra'
+        ,'-Wuninitialized'
+        ])
+    gfaPath = '/home/%s/trees/work/gfa/inst/posix/opt' % user
+    gfaLib = 'libgfa.so'
+    faarayPath = '/home/%s/trees/work/faaray/inst/posix/opt' % user
+    faarayLib = 'libfaaray.so'
+    if user == 'afrank':
+        baseEnv.Replace(CXX = '/dist/d2sets/fedora-11-x86_64/tools-base-03-python/bin/g++')
+        pixarToolsBase = '/dist/d2sets/fedora-11-x86_64/tools-base-03-python';
+        baseEnv.Append(CPPPATH = ['%s/include' % pixarToolsBase])
+        baseEnv.Append(LIBPATH = ['%s/lib' % pixarToolsBase])
+        glewPath = '%s/lib64/libGLEW.so.1.6' % pixarToolsBase
+        qtver = ['qt4', 'QT4DIR', pixarToolsBase]
+    elif user == 'frank':
+        baseEnv.Append(CCFLAGS = ['-fPIC']);
+        tbbToolsBase = '/home/frank/tbb41_20130116oss'
+        baseEnv.Append(CPPPATH = ['%s/include' % tbbToolsBase])
+        baseEnv.Append(LIBPATH = ['%s/lib/intel64/cc4.1.0_libc2.4_kernel2.6.16.21' % tbbToolsBase])
+        baseEnv.Append(LIBS=     ['GLEW', 'GL'])
+        qtver = ['qt5', 'QT5DIR', '/home/frank/Qt5.0.2/5.0.2/gcc_64']
+elif platform == 'win32':
+    user = os.environ['USERNAME']
+    baseEnv.Append(ENV = {'PATH' : os.environ['PATH']})
+    baseEnv.Append(ENV = {'LIB' : os.environ.get('LIB')})
+    baseEnv.Append(ENV = {'INCLUDE' : os.environ.get('INCLUDE')})
+    baseEnv.Append(CCFLAGS = [
+        '-D_WIN32'
+        #,'/W4'
+        #,'/Wall'
+        #,'/WX'
+        #,'/Za'
+        ,'/EHsc'
+        ])
+    gfaPath = 'C:/Work/gfa/inst/win32/opt'
+    gfaLib = 'gfa.dll'
+    faarayPath = 'C:/Work/faaray/inst/win32/opt'
+    faarayLib = 'faaray.dll'
+    if user == 'Amy Chen':
+        tbbToolsBase = 'C:/Work/tbb42_20131118oss'
+        baseEnv.Append(LIBPATH = ['%s/lib/ia32/vc11' % tbbToolsBase])
+        qtver = ['qt5', 'QT5DIR', 'C:/Qt/Qt5.1.1/5.1.1/msvc2010_opengl']
+    else:
+        tbbToolsBase = 'C:/Work/tbb42_20131003oss'
+        baseEnv.Append(LIBPATH = ['%s/lib/intel64/vc11' % tbbToolsBase])
+        qtver = ['qt5', 'QT5DIR', 'C:/Qt/Qt5.1.1/5.1.1/msvc2012_64_opengl']
+    baseEnv.Append(CPPPATH = ['%s/include' % tbbToolsBase])
+elif platform == 'darwin':
+    user = os.environ['USER']
+    pass
+
+# DIST SCTRUCTURE and flags
+if debug:
+    baseEnv['BUILDKIND'] = 'debug'
+    baseEnv.Append(CCFLAGS = ['-fno-inline', '-O0', '-g3'])
+else:
+    baseEnv['BUILDKIND'] = 'opt'
+    baseEnv.Append(CCFLAGS = ['-O'])
+distPath = '#/inst/%s/%s' % (baseEnv['PLATFORM'], baseEnv['BUILDKIND'])
+baseEnv['DISTPATH'] = distPath
+
+# Add libraries
+baseEnv.Append(CPPPATH = ['%s/include' % gfaPath, '%s/include' % faarayPath])
+baseEnv.Append(LIBPATH = ['%s/lib' % gfaPath, '%s/lib' % faarayPath])
+
+baseEnv.Append(LIBS=     ['gfa', 'faaray', 'tbb'])
+
+# copy lib for exec
+baseEnv.Install(baseEnv['DISTPATH']+'/bin', '%s/lib/%s' % (gfaPath,gfaLib))
+baseEnv.Install(baseEnv['DISTPATH']+'/bin', '%s/lib/%s' % (faarayPath,faarayLib))
+
+# Clone Qt environment
+qtEnv = baseEnv.Clone()
+
+# Set QT#DIR and PKG_CONFIG_PATH
+qtEnv['ENV']['PKG_CONFIG_PATH'] = os.path.join(qtver[2], 'lib/pkgconfig')
+qtEnv[qtver[1]] = qtver[2]
+
+# Add qt tool
+qtEnv.Tool(qtver[0])
+
+#...further customization of qt env
+
+# Export environments
+Export('baseEnv qtEnv')
+
+# Your other stuff...
+
+SConscript('SConscript')
+
